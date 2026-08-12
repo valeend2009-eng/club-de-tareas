@@ -74,10 +74,16 @@
     }
 
     function goToPayment() {
-        const total = document.getElementById('total').innerText.replace(/\./g, '');
-        // AQUÍ DEBÉS PEGAR EL LINK DE PAGO DE MERCADO PAGO
-        // Ejemplo: window.location.href = "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=TU_ID";
-        alert("Redirigiendo a Mercado Pago para abonar $" + total);
+        const total = document.getElementById('total').innerText;
+        if (total === "0") {
+            alert("Por favor, seleccioná al menos una clase antes de pagar.");
+            return;
+        }
+        
+        // REEMPLAZÁ ESTA URL POR LA TUYA DE MERCADO PAGO
+        const linkDePagoMP = "https://www.mercadopago.com.ar/valenendara"; 
+        
+        window.location.href = linkDePagoMP;
     }
 
     buildCalendar();
