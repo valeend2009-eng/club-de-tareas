@@ -2,317 +2,85 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Club de Tareas - Reserva de Clases</title>
     <style>
-        :root {
-            --primary-color: #006633; /* Verde universitario tipo Siglo 21 */
-            --primary-hover: #004d26;
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #cccccc;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        header h1 {
-            color: var(--primary-color);
-            margin: 0;
-            font-size: 2.2rem;
-        }
-
-        header p {
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .section-title {
-            font-size: 1.2rem;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 5px;
-            margin-top: 25px;
-            margin-bottom: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
-
-        .schedule-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            background-color: var(--primary-hover);
-        }
-
-        button.btn-danger {
-            background-color: #dc3545;
-        }
-
-        button.btn-danger:hover {
-            background-color: #b02a37;
-        }
-
-        .slot-list {
-            list-style: none;
-            padding: 0;
-            margin: 10px 0;
-        }
-
-        .slot-item {
-            background: #e9f5ed;
-            padding: 8px 12px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .summary-box {
-            background: #f8f9fa;
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 30px;
-            text-align: right;
-        }
-
-        .summary-box h3 {
-            margin: 0 0 10px 0;
-            text-align: left;
-            color: var(--primary-color);
-        }
-
-        .total-price {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .btn-pay {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.2rem;
-            margin-top: 15px;
-            background-color: #28a745;
-        }
-
-        .btn-pay:hover {
-            background-color: #218838;
-        }
+        :root { --primary-color: #006633; }
+        body { font-family: sans-serif; padding: 20px; background: #f4f7f6; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 12px; }
+        .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-top: 20px; }
+        .cell { border: 1px solid #ddd; padding: 10px; text-align: center; cursor: pointer; }
+        .cell.header { background: var(--primary-color); color: white; font-weight: bold; }
+        .cell.selected { background: #28a745; color: white; }
+        .btn-pay { background: #009ee3; color: white; padding: 15px; border: none; width: 100%; margin-top: 20px; border-radius: 5px; font-size: 1.2rem; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>Club de Tareas</h1>
-        <p>Reserva tus clases particulares de forma rápida y sencilla</p>
-    </header>
+    <h1>Club de Tareas</h1>
+    <p>Consultas: <strong>2804622107</strong></p>
+    
+    <div>
+        <label>Nombre:</label><input type="text" id="name" required><br>
+        <label>Email:</label><input type="email" id="email" required><br>
+        <label>Celular:</label><input type="tel" id="phone" required><br>
+        <label>Nivel:</label>
+        <select id="level" onchange="calculate()">
+            <option value="12500">Primaria ($12.500)</option>
+            <option value="15000">Secundaria ($15.000)</option>
+        </select>
+    </div>
 
-    <form id="bookingForm" onsubmit="processPayment(event)">
-        <!-- Datos del Alumno -->
-        <div class="section-title">1. Datos del Alumno</div>
-        <div class="form-group">
-            <label for="studentName">Nombre y Apellido:</label>
-            <input type="text" id="studentName" required placeholder="Ej: Juan Pérez">
-        </div>
-        <div class="form-group">
-            <label for="studentLevel">Nivel Educativo:</label>
-            <select id="studentLevel" onchange="updatePrices()" required>
-                <option value="" disabled selected>Seleccioná un nivel</option>
-                <option value="primario">Primario ($12.500 / hora)</option>
-                <option value="secundario">Secundario ($15.000 / hora)</option>
-            </select>
-        </div>
+    <h3>Seleccioná tus horarios:</h3>
+    <div class="grid" id="calendar">
+        <!-- Generado por JS -->
+    </div>
 
-        <!-- Selección de Turnos -->
-        <div class="section-title">2. Selección de Días y Horarios</div>
-        <p style="font-size: 0.9rem; color: #666;">Horarios disponibles: Lunes a Viernes de 09:00 a 18:00 (Almuerzo de 12:00 a 13:00 excluido).</p>
-        
-        <div class="schedule-grid">
-            <select id="selectedDay">
-                <option value="Lunes">Lunes</option>
-                <option value="Martes">Martes</option>
-                <option value="Miércoles">Miércoles</option>
-                <option value="Jueves">Jueves</option>
-                <option value="Viernes">Viernes</option>
-            </select>
-            <select id="selectedHour">
-                <option value="09:00">09:00 a 10:00</option>
-                <option value="10:00">10:00 a 11:00</option>
-                <option value="11:00">11:00 a 12:00</option>
-                <!-- 12:00 a 13:00 excluido por almuerzo -->
-                <option value="13:00">13:00 a 14:00</option>
-                <option value="14:00">14:00 a 15:00</option>
-                <option value="15:00">15:00 a 16:00</option>
-                <option value="16:00">16:00 a 17:00</option>
-                <option value="17:00">17:00 a 18:00</option>
-            </select>
-            <button type="button" onclick="addSlot()">Agregar Clase</button>
-        </div>
-
-        <ul id="slotList" class="slot-list">
-            <!-- Aquí se cargan dinámicamente los turnos elegidos -->
-        </ul>
-
-        <!-- Resumen y Pago -->
-        <div class="summary-box">
-            <h3>Resumen de la Reserva</h3>
-            <p>Cantidad de clases: <span id="totalClasses">0</span></p>
-            <p>Valor por clase: $<span id="pricePerClass">0</span></p>
-            <div>Total a Pagar:</div>
-            <div class="total-price">$<span id="totalPrice">0</span></div>
-            <button type="submit" class="btn-pay" id="payButton" disabled>Pagar y Confirmar Reserva</button>
-        </div>
-    </form>
+    <div style="margin-top:20px; font-size: 1.5rem;">
+        Total: $<span id="total">0</span>
+    </div>
+    
+    <button class="btn-pay" onclick="goToPayment()">Pagar con Mercado Pago</button>
 </div>
 
 <script>
     let selectedSlots = [];
-    const prices = {
-        primario: 12500,
-        secundario: 15000
-    };
+    const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'];
+    const hours = ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
-    function updatePrices() {
-        calculateTotal();
-    }
-
-    function addSlot() {
-        const day = document.getElementById('selectedDay').value;
-        const hour = document.getElementById('selectedHour').value;
-        const level = document.getElementById('studentLevel').value;
-
-        if (!level) {
-            alert('Por favor, seleccioná primero el nivel educativo.');
-            return;
-        }
-
-        // Verificar si ya existe el turno exacto
-        const exists = selectedSlots.some(slot => slot.day === day && slot.hour === hour);
-        if (exists) {
-            alert('Ya agregaste este día y horario a tu lista.');
-            return;
-        }
-
-        selectedSlots.push({ day, hour });
-        renderSlots();
-        calculateTotal();
-    }
-
-    function removeSlot(index) {
-        selectedSlots.splice(index, 1);
-        renderSlots();
-        calculateTotal();
-    }
-
-    function renderSlots() {
-        const listContainer = document.getElementById('slotList');
-        listContainer.innerHTML = '';
-
-        selectedSlots.forEach((slot, index) => {
-            const li = document.createElement('li');
-            li.className = 'slot-item';
-            li.innerHTML = `
-                <span>📅 <strong>${slot.day}</strong> a las <strong>${slot.hour} hs</strong></span>
-                <button type="button" class="btn-danger" onclick="removeSlot(${index})">Eliminar</button>
-            `;
-            listContainer.appendChild(li);
+    function buildCalendar() {
+        const cal = document.getElementById('calendar');
+        cal.innerHTML = '<div class="cell header">Hora</div>' + days.map(d => `<div class="cell header">${d}</div>`).join('');
+        
+        hours.forEach(h => {
+            cal.innerHTML += `<div class="cell"><strong>${h}</strong></div>`;
+            days.forEach((d, i) => {
+                cal.innerHTML += `<div class="cell" onclick="toggle(this, '${d}', '${h}')">${h}</div>`;
+            });
         });
     }
 
-    function calculateTotal() {
-        const level = document.getElementById('studentLevel').value;
-        const price = level ? prices[level] : 0;
-        const totalClasses = selectedSlots.length;
-        const totalPrice = totalClasses * price;
-
-        document.getElementById('totalClasses').innerText = totalClasses;
-        document.getElementById('pricePerClass').innerText = price.toLocaleString('es-AR');
-        document.getElementById('totalPrice').innerText = totalPrice.toLocaleString('es-AR');
-
-        const payButton = document.getElementById('payButton');
-        if (totalClasses > 0 && level) {
-            payButton.disabled = false;
-        } else {
-            payButton.disabled = true;
-        }
+    function toggle(el, d, h) {
+        el.classList.toggle('selected');
+        const id = d + h;
+        if(selectedSlots.includes(id)) selectedSlots = selectedSlots.filter(s => s !== id);
+        else selectedSlots.push(id);
+        calculate();
     }
 
-    function processPayment(event) {
-        event.preventDefault();
-        const name = document.getElementById('studentName').value;
-        const totalPrice = document.getElementById('totalPrice').innerText;
-
-        alert(`¡Gracias por tu inscripción, ${name}!
-
-Se ha procesado el pago por un total de $${totalPrice}.
-Te contactaremos para confirmar el inicio de las clases en el Club de Tareas.`);
-        
-        // Limpiar formulario
-        document.getElementById('bookingForm').reset();
-        selectedSlots = [];
-        renderSlots();
-        calculateTotal();
+    function calculate() {
+        const price = document.getElementById('level').value;
+        document.getElementById('total').innerText = (selectedSlots.length * price).toLocaleString();
     }
+
+    function goToPayment() {
+        const total = document.getElementById('total').innerText.replace(/\./g, '');
+        // AQUÍ DEBÉS PEGAR EL LINK DE PAGO DE MERCADO PAGO
+        // Ejemplo: window.location.href = "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=TU_ID";
+        alert("Redirigiendo a Mercado Pago para abonar $" + total);
+    }
+
+    buildCalendar();
 </script>
-
 </body>
 </html>
